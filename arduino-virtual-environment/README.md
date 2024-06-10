@@ -18,7 +18,9 @@ python -m venv nombre_del_entorno
 ```
 2. Activa el entorno virtual:
 ```bash
-.\nombre_del_entorno\Scripts\activate
+cd nombre_del_entorno\Scripts
+activate
+cd ..
 ```
 
 3. Clonar el repositorio:
@@ -43,11 +45,13 @@ python app.py
 
 ## Uso
 
-Una vez que el servidor esté en funcionamiento, puedes acceder a la API GraphQL en http://localhost:4000/graphql.
+Una vez que el servidor esté en funcionamiento, puedes acceder a la API GraphQL en http://localhost:5000/graphql.
 
 Aquí tienes algunos ejemplos de consultas:
 
-# Obtener todas las infracciones
+### Obtener todas las infracciones
+
+```bash
 query {
   infracciones {
     id
@@ -56,8 +60,11 @@ query {
     descripcion
   }
 }
+```
 
-# Obtener una infracción por ID
+### Obtener una infracción por ID
+
+```bash
 query {
   infraccion(id: 1) {
     id
@@ -66,8 +73,10 @@ query {
     descripcion
   }
 }
+```
+### Crear una nueva infracción
 
-# Crear una nueva infracción
+```bash
 mutation {
   createInfraccion(fecha: "2023-10-26", tipo: "Exceso de velocidad", descripcion: "Exceso de velocidad en la autopista") {
     id
@@ -76,6 +85,7 @@ mutation {
     descripcion
   }
 }
+```
 
 ## Documentación
 
