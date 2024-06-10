@@ -1,0 +1,46 @@
+-- Crear la tabla registro
+CREATE TABLE registro (
+    numero_registro SERIAL PRIMARY KEY,
+    nombreyapellido VARCHAR(100) NOT NULL,
+    domicilio VARCHAR(100) NOT NULL,
+    edad INTEGER,
+    fecha_emision VARCHAR(10),
+    fecha_vencimiento VARCHAR(10) NOT NULL
+);
+
+-- Crear la tabla vehiculo
+CREATE TABLE vehiculo (
+    patente_vehiculo VARCHAR(20) PRIMARY KEY,
+    anio_fabricacion INTEGER,
+    nombreyapellido_propietario VARCHAR(100) NOT NULL,
+    domicilio_propietario VARCHAR(100) NOT NULL
+);
+
+-- Crear la tabla infraccion
+CREATE TABLE infraccion (
+    numero_infraccion SERIAL PRIMARY KEY,
+    numero_registro_id INTEGER REFERENCES registro(numero_registro),
+    patente_vehiculo_id VARCHAR(20) REFERENCES vehiculo(patente_vehiculo),
+    codigo_infraccion VARCHAR(20),
+    fecha VARCHAR(10),
+    hora VARCHAR(10),
+    observaciones VARCHAR(300)
+);
+
+-- Insertar datos de prueba en la tabla registro
+INSERT INTO registro (nombreyapellido, domicilio, edad, fecha_emision, fecha_vencimiento) VALUES
+('Juan Perez', 'Calle Falsa 123', 30, '2023-01-01', '2024-01-01'),
+('Maria Gomez', 'Avenida Siempre Viva 456', 25, '2022-05-15', '2023-05-15'),
+('Carlos Ruiz', 'Boulevard de los Sueños 789', 40, '2021-09-10', '2022-09-10');
+
+-- Insertar datos de prueba en la tabla vehiculo
+INSERT INTO vehiculo (patente_vehiculo, anio_fabricacion, nombreyapellido_propietario, domicilio_propietario) VALUES
+('ABC123', 2015, 'Juan Perez', 'Calle Falsa 123'),
+('XYZ789', 2018, 'Maria Gomez', 'Avenida Siempre Viva 456'),
+('LMN456', 2020, 'Carlos Ruiz', 'Boulevard de los Sueños 789');
+
+-- Insertar datos de prueba en la tabla infraccion
+INSERT INTO infraccion (numero_registro_id, patente_vehiculo_id, codigo_infraccion, fecha, hora, observaciones) VALUES
+(1, 'ABC123', 'EXC001', '2023-06-01', '08:30', 'Exceso de velocidad en zona urbana'),
+(2, 'XYZ789', 'PRK002', '2023-06-02', '10:45', 'Estacionamiento en lugar prohibido'),
+(3, 'LMN456', 'RLZ003', '2023-06-03', '14:00', 'No respetar el semáforo en rojo');
