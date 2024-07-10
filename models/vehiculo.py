@@ -6,3 +6,5 @@ class Vehiculo(db.Model):
     anio_fabricacion = db.Column(db.Integer, nullable=True)
     nombreyapellido_propietario = db.Column(db.String(100))
     domicilio_propietario  = db.Column(db.String(100))
+    modelo = db.Column(db.String(50))
+    marca = db.Column(db.String(50))

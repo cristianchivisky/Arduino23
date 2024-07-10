@@ -1,6 +1,6 @@
 -- Crear la tabla registro
 CREATE TABLE registro (
-    numero_registro SERIAL PRIMARY KEY,
+    numero_registro INTEGER PRIMARY KEY,
     nombreyapellido VARCHAR(100) NOT NULL,
     domicilio VARCHAR(100) NOT NULL,
     edad INTEGER,
@@ -14,6 +14,8 @@ CREATE TABLE vehiculo (
     anio_fabricacion INTEGER,
     nombreyapellido_propietario VARCHAR(100) NOT NULL,
     domicilio_propietario VARCHAR(100) NOT NULL
+    modelo VARCHAR(50),
+    marca VARCHAR(50)
 );
 
 -- Crear la tabla infraccion
@@ -24,23 +26,76 @@ CREATE TABLE infraccion (
     codigo_infraccion VARCHAR(20),
     fecha VARCHAR(10),
     hora VARCHAR(10),
-    observaciones VARCHAR(300)
+    observaciones VARCHAR(300),
+    monto FLOAT,
+    pagado BOOLEAN DEFAULT FALSE
 );
 
+CREATE TABLE usuario (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) UNIQUE NOT NULL,
+    contrasenia VARCHAR(200) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    creado TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- Insertar datos de prueba en la tabla registro
-INSERT INTO registro (nombreyapellido, domicilio, edad, fecha_emision, fecha_vencimiento) VALUES
-('Juan Perez', 'Calle Falsa 123', 30, '2023-01-01', '2024-01-01'),
-('Maria Gomez', 'Avenida Siempre Viva 456', 25, '2022-05-15', '2023-05-15'),
-('Carlos Ruiz', 'Boulevard de los Sueños 789', 40, '2021-09-10', '2022-09-10');
+INSERT INTO registro (numero_registro, nombreyapellido, domicilio, edad, fecha_emision, fecha_vencimiento) VALUES
+(12345678, 'Juan Perez', 'Calle Falsa 123', 30, '2023-01-01', '2024-01-01'),
+(23456789, 'Maria Gomez', 'Avenida Siempre Viva 456', 25, '2022-05-15', '2023-05-15'),
+(34567890, 'Carlos Ruiz', 'Boulevard de los Sueños 789', 40, '2021-09-10', '2022-09-10'),
+(45678901, 'Ana Torres', 'Camino Real 321', 28, '2023-02-01', '2024-02-01'),
+(56789012, 'Luis Mendoza', 'Calle Principal 654', 35, '2022-06-20', '2023-06-20'),
+(67890123, 'Elena Ramírez', 'Callejón del Sol 987', 42, '2021-11-05', '2022-11-05'),
+(78901234, 'Lucia Gonzalez', 'Calle Luna 101', 32, '2022-01-01', '2023-01-01'),
+(89012345, 'Jorge Diaz', 'Avenida Sol 202', 45, '2021-05-15', '2022-05-15'),
+(90123456, 'Mariana Lopez', 'Boulevard Estrella 303', 29, '2020-09-10', '2021-09-10'),
+(12345679, 'Pablo Martinez', 'Camino Real 404', 37, '2019-02-01', '2020-02-01'),
+(23456780, 'Sofia Sanchez', 'Calle del Sol 505', 41, '2022-06-20', '2023-06-20');
+
 
 -- Insertar datos de prueba en la tabla vehiculo
-INSERT INTO vehiculo (patente_vehiculo, anio_fabricacion, nombreyapellido_propietario, domicilio_propietario) VALUES
-('ABC123', 2015, 'Juan Perez', 'Calle Falsa 123'),
-('XYZ789', 2018, 'Maria Gomez', 'Avenida Siempre Viva 456'),
-('LMN456', 2020, 'Carlos Ruiz', 'Boulevard de los Sueños 789');
+INSERT INTO vehiculo (patente_vehiculo, anio_fabricacion, nombreyapellido_propietario, domicilio_propietario, modelo, marca) VALUES
+('ABC123', 2015, 'Juan Perez', 'Calle Falsa 123', 'Fiesta', 'Ford'),
+('XYZ789', 2018, 'Maria Gomez', 'Avenida Siempre Viva 456', 'Civic', 'Honda'),
+('LMN456', 2020, 'Carlos Ruiz', 'Boulevard de los Sueños 789', 'Corolla', 'Toyota'),
+('DEF456', 2016, 'Ana Torres', 'Camino Real 321', 'Civic', 'Honda'),
+('GHI789', 2019, 'Luis Mendoza', 'Calle Principal 654', 'Corolla', 'Toyota'),
+('JKL012', 2021, 'Elena Ramírez', 'Callejón del Sol 987', 'Focus', 'Ford'),
+('MNO345', 2017, 'Lucia Gonzalez', 'Calle Luna 101', 'Sentra', 'Nissan'),
+('PQR678', 2019, 'Jorge Diaz', 'Avenida Sol 202', 'Accord', 'Honda'),
+('STU901', 2021, 'Mariana Lopez', 'Boulevard Estrella 303', 'Civic', 'Honda'),
+('VWX234', 2016, 'Pablo Martinez', 'Camino Real 404', 'Camry', 'Toyota'),
+('YZA567', 2018, 'Sofia Sanchez', 'Calle del Sol 505', 'Cruze', 'Chevrolet');
 
 -- Insertar datos de prueba en la tabla infraccion
-INSERT INTO infraccion (numero_registro_id, patente_vehiculo_id, codigo_infraccion, fecha, hora, observaciones) VALUES
-(1, 'ABC123', 'EXC001', '2023-06-01', '08:30', 'Exceso de velocidad en zona urbana'),
-(2, 'XYZ789', 'PRK002', '2023-06-02', '10:45', 'Estacionamiento en lugar prohibido'),
-(3, 'LMN456', 'RLZ003', '2023-06-03', '14:00', 'No respetar el semáforo en rojo');
+INSERT INTO infraccion (numero_registro_id, patente_vehiculo_id, codigo_infraccion, fecha, hora, observaciones, monto, pagado) VALUES
+(12345678, 'ABC123', 'EXC001', '2023-06-01', '08:30', 'Exceso de velocidad en zona urbana', 100.00, FALSE),
+(23456789, 'XYZ789', 'PRK002', '2023-06-02', '10:45', 'Estacionamiento en lugar prohibido', 150.00, TRUE),
+(34567890, 'LMN456', 'RLZ003', '2023-06-03', '14:00', 'No respetar el semáforo en rojo', 180.00, FALSE),
+(45678901, 'DEF456', 'EXC004', '2023-07-01', '09:15', 'Exceso de velocidad en carretera', 200.00, FALSE),
+(56789012, 'GHI789', 'PRK005', '2023-07-02', '11:30', 'Estacionamiento en acera', 150.00, TRUE),
+(67890123, 'JKL012', 'RLZ006', '2023-07-03', '13:45', 'No respetar el paso peatonal', 180.00, FALSE),
+(12345678, 'ABC123', 'EXC007', '2023-07-04', '16:00', 'Conducir sin cinturón de seguridad', 100.00, TRUE),
+(23456789, 'XYZ789', 'PRK008', '2023-07-05', '18:15', 'Estacionamiento en zona de carga', 120.00, FALSE),
+(34567890, 'LMN456', 'RLZ009', '2023-07-06', '20:30', 'Conducir hablando por teléfono', 90.00, TRUE),
+(12345678, 'ABC123', 'EXC010', '2023-08-01', '07:30', 'Conducir con exceso de velocidad en zona escolar', 250.00, FALSE),
+(12345678, 'ABC123', 'EXC011', '2023-08-10', '09:00', 'No respetar señal de tránsito', 100.00, TRUE),
+(23456789, 'XYZ789', 'PRK012', '2023-08-15', '11:00', 'Estacionamiento en lugar para discapacitados', 200.00, FALSE),
+(23456789, 'XYZ789', 'PRK013', '2023-08-20', '13:30', 'Estacionamiento en lugar prohibido', 150.00, TRUE),
+(34567890, 'LMN456', 'RLZ014', '2023-08-25', '15:45', 'No respetar señal de alto', 180.00, FALSE),
+(34567890, 'LMN456', 'RLZ015', '2023-09-01', '17:00', 'Conducir sin licencia', 300.00, FALSE),
+(45678901, 'DEF456', 'EXC016', '2023-09-05', '18:30', 'Exceso de velocidad en carretera', 220.00, TRUE),
+(56789012, 'GHI789', 'PRK017', '2023-09-10', '20:00', 'Estacionamiento en zona de carga', 120.00, FALSE),
+(56789012, 'GHI789', 'PRK018', '2023-09-15', '21:15', 'Estacionamiento en acera', 150.00, TRUE),
+(67890123, 'JKL012', 'RLZ019', '2023-09-20', '23:30', 'No respetar el paso peatonal', 180.00, FALSE),
+(78901234, 'MNO345', 'EXC020', '2023-10-01', '08:00', 'Conducir con exceso de velocidad', 200.00, FALSE),
+(78901234, 'MNO345', 'EXC021', '2023-10-05', '09:30', 'No respetar el semáforo en rojo', 180.00, TRUE),
+(89012345, 'PQR678', 'PRK022', '2023-10-10', '11:45', 'Estacionamiento en lugar prohibido', 150.00, FALSE),
+(89012345, 'PQR678', 'PRK023', '2023-10-15', '13:00', 'Estacionamiento en acera', 150.00, TRUE),
+(90123456, 'STU901', 'RLZ024', '2023-10-20', '15:30', 'No respetar señal de tránsito', 100.00, FALSE),
+(90123456, 'STU901', 'RLZ025', '2023-10-25', '17:15', 'Conducir sin cinturón de seguridad', 100.00, TRUE),
+(12345679, 'VWX234', 'EXC026', '2023-11-01', '19:00', 'Exceso de velocidad en zona urbana', 100.00, FALSE),
+(23456780, 'YZA567', 'PRK027', '2023-11-05', '21:30', 'Estacionamiento en zona de carga', 120.00, TRUE);
+

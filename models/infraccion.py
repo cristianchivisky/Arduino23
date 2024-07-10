@@ -9,5 +9,7 @@ class Infraccion(db.Model):
     fecha = db.Column(db.String(10))
     hora = db.Column(db.String(10))
     observaciones = db.Column(db.String(300))
+    monto = db.Column(db.Float)
+    pagado = db.Column(db.Boolean, default=False)
     registro = db.relationship("Registro", backref="infracciones")
     vehiculo = db.relationship("Vehiculo", backref="infracciones")
