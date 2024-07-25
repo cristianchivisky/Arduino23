@@ -19,14 +19,14 @@ class Query(ObjectType):
     all_vehiculos = List(lambda: Vehiculo)
     all_registros = List(lambda: Registro)
     infracciones = List(lambda: Infraccion, numero_infraccion=Int(),  codigo_infraccion=String(), fecha=String(), hora=String(), monto=Float(), pagado=Boolean())
-    vehiculos = List(lambda: Vehiculo, patente_vehiculo=String(), anio_fabricacion=Int(), nombreyapellido_propietario=String(), domicilio_propietario=String(), marca=String(), modelo=String())
-    registros = List(lambda: Registro, numero_registro=Int(), nombreyapellido=String(), domicilio=String(), edad=Int(), fecha_emision=String(), fecha_vencimiento=String())
+    vehiculos = List(lambda: Vehiculo, patente_vehiculo=String(), anio_fabricacion=Int(), nombre_propietario=String(), apellido_propietario=String(), domicilio_propietario_calle=String(), domicilio_propietario_ciudad=String(), marca=String(), modelo=String())
+    registros = List(lambda: Registro, numero_registro=Int(), nombre=String(), apellido=String(), domicilio_calle=String(), domicilio_ciudad=String(), edad=Int(), fecha_emision=String(), fecha_vencimiento=String())
     infraccion = Field(lambda: Infraccion, numero_infraccion=Int())
     vehiculo = Field(lambda: Vehiculo, patente_vehiculo=String())
     registro = Field(lambda: Registro, numero_registro=Int())
     all_usuarios = List(lambda: Usuario)
     usuarios = List(lambda: Usuario, id=Int(), nombre=String(), email=String(), creado=String())
-    usuario = Field(lambda: Usuario, nombre=String(required=True), contrasenia=String(required=True))
+    usuario = Field(lambda: Usuario, nombre=String(required=True))
 
     def resolve_all_usuarios(self, info):
         query = Usuario.get_query(info=info)
@@ -44,8 +44,8 @@ class Query(ObjectType):
             query = query.filter(UsuarioModel.creado == creado)
         return query.all()
 
-    def resolve_usuario(self, info, nombre, contrasenia):
-        usuario = UsuarioModel.query.filter_by(nombre=nombre, contrasenia=contrasenia).first()
+    def resolve_usuario(self, info, nombre):
+        usuario = UsuarioModel.query.filter_by(nombre=nombre).first()
         return usuario
     
     def resolve_all_infracciones(self, info):
@@ -76,16 +76,20 @@ class Query(ObjectType):
         query = Vehiculo.get_query(info=info)
         return query.all()
 
-    def resolve_vehiculos(self, info, patente_vehiculo=None, anio_fabricacion=None, nombreyapellido_propietario=None, domicilio_propietario=None, modelo=None, marca=None):
+    def resolve_vehiculos(self, info, patente_vehiculo=None, anio_fabricacion=None, nombre_propietario=None, apellido_propietario=None, domicilio_propietario_calle=None, domicilio_propietario_ciudad=None, modelo=None, marca=None):
         query = Vehiculo.get_query(info=info)
         if patente_vehiculo:
             query = query.filter(VehiculoModel.patente_vehiculo==patente_vehiculo)
         if anio_fabricacion:
             query = query.filter(VehiculoModel.anio_fabricacion==anio_fabricacion)
-        if nombreyapellido_propietario:
-            query = query.filter(VehiculoModel.nombreyapellido_propietario==nombreyapellido_propietario)
-        if domicilio_propietario:
-            query = query.filter(VehiculoModel.domicilio_propietario==domicilio_propietario)
+        if nombre_propietario:
+            query = query.filter(VehiculoModel.nombre_propietario==nombre_propietario)
+        if apellido_propietario:
+            query = query.filter(VehiculoModel.apellido_propietario==apellido_propietario)
+        if domicilio_propietario_calle:
+            query = query.filter(VehiculoModel.domicilio_propietario_calle==domicilio_propietario_calle)
+        if domicilio_propietario_ciudad:
+            query = query.filter(VehiculoModel.domicilio_propietario_ciudad==domicilio_propietario_ciudad)
         if marca:
             query = query.filter(VehiculoModel.marca==marca)
         if modelo:
@@ -100,14 +104,18 @@ class Query(ObjectType):
         query = Registro.get_query(info=info)
         return query.all()
     
-    def resolve_registros(self, info, numero_registro=None, nombreyapellido=None, domicilio=None, edad=None, fecha_emision=None, fecha_vencimiento=None):
+    def resolve_registros(self, info, numero_registro=None, nombre=None, apellido=None, domicilio_calle=None, domicilio_ciudad=None, edad=None, fecha_emision=None, fecha_vencimiento=None):
         query = Registro.get_query(info=info)
         if numero_registro:
             query = query.filter(RegistroModel.numero_registro==numero_registro)
-        if nombreyapellido:
-            query = query.filter(RegistroModel.nombreyapellido==nombreyapellido)
-        if domicilio:
-            query = query.filter(RegistroModel.domicilio==domicilio)
+        if nombre:
+            query = query.filter(RegistroModel.nombre==nombre)
+        if apellido:
+            query = query.filter(RegistroModel.apellido==apellido)
+        if domicilio_calle:
+            query = query.filter(RegistroModel.domicilio_calle==domicilio_calle)
+        if domicilio_ciudad:
+            query = query.filter(RegistroModel.domicilio_ciudad==domicilio_ciudad)
         if edad:
             query = query.filter(RegistroModel.edad==edad)
         if fecha_emision:

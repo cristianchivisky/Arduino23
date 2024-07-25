@@ -22,7 +22,7 @@ from models.infraccion import Infraccion as InfraccionModel
 from models.registro import Registro as RegistroModel
 from models.usuario import Usuario as UsuarioModel
 
-class createInfraccion(Mutation):
+class CreateInfraccion(Mutation):
     class Arguments:
         numero_registro_id = Int(required=True)
         patente_vehiculo_id = String(required=True)
@@ -48,9 +48,9 @@ class createInfraccion(Mutation):
         db.session.add(infraccion)
         db.session.commit()
 
-        return createInfraccion(infraccion=infraccion)
+        return CreateInfraccion(infraccion=infraccion)
 
-class updateInfraccion(Mutation):
+class UpdateInfraccion(Mutation):
     class Arguments:
         numero_infraccion = Int(required=True)
         numero_registro_id = Int()
@@ -59,10 +59,12 @@ class updateInfraccion(Mutation):
         observaciones = String()
         monto = Float()
         pagado = Boolean()
+        hora = String()
+        fecha = String()
 
     infraccion = Field(lambda: Infraccion)
 
-    def mutate(self, info, numero_infraccion, numero_registro_id=None, patente_vehiculo_id=None, codigo_infraccion=None, monto=None, pagado=None, observaciones=None):
+    def mutate(self, info, numero_infraccion, numero_registro_id=None, patente_vehiculo_id=None, codigo_infraccion=None, monto=None, pagado=None, observaciones=None, fecha=None, hora=None):
         infraccion = InfraccionModel.query.get(numero_infraccion)
         if infraccion:
             if numero_registro_id:
@@ -77,12 +79,16 @@ class updateInfraccion(Mutation):
                 infraccion.monto = monto
             if pagado:
                 infraccion.pagado = pagado
+            if fecha:
+                infraccion.fecha = fecha
+            if hora:
+                infraccion.hora = hora
             db.session.add(infraccion)
             db.session.commit()
 
-        return updateInfraccion(infraccion=infraccion)
+        return UpdateInfraccion(infraccion=infraccion)
 
-class deleteInfraccion(Mutation):
+class DeleteInfraccion(Mutation):
     class Arguments:
         numero_infraccion = Int(required=True)
 
@@ -94,53 +100,67 @@ class deleteInfraccion(Mutation):
             db.session.delete(infraccion)
             db.session.commit()
 
-        return deleteInfraccion(infraccion=infraccion)
+        return DeleteInfraccion(infraccion=infraccion)
 
-class createVehiculo(Mutation):
+class CreateVehiculo(Mutation):
     class Arguments:
         patente_vehiculo = String(required=True)
         anio_fabricacion = Int(required=True)
-        nombreyapellido_propietario = String(required=True)
-        domicilio_propietario = String(required=True)
+        nombre_propietario = String(required=True)
+        apellido_propietario = String(required=True)
+        domicilio_propietario_calle = String(required=True)
+        domicilio_propietario_numero = Int(required=True)
+        domicilio_propietario_ciudad = String(required=True)
         modelo = String(required=True)
         marca = String(required=True)
     
     vehiculo = Field(lambda: Vehiculo)
 
-    def mutate(self, info, patente_vehiculo, anio_fabricacion,  nombreyapellido_propietario, domicilio_propietario, modelo, marca):
+    def mutate(self, info, patente_vehiculo, anio_fabricacion, nombre_propietario, apellido_propietario, domicilio_propietario_calle, domicilio_propietario_numero, domicilio_propietario_ciudad, modelo, marca):
         vehiculo = VehiculoModel(patente_vehiculo=patente_vehiculo,
                                 anio_fabricacion=anio_fabricacion,
-                                nombreyapellido_propietario=nombreyapellido_propietario,
-                                domicilio_propietario=domicilio_propietario,
+                                nombre_propietario=nombre_propietario,
+                                apellido_propietario=apellido_propietario,
+                                domicilio_propietario_calle=domicilio_propietario_calle,
+                                domicilio_propietario_numero=domicilio_propietario_numero,
+                                domicilio_propietario_ciudad=domicilio_propietario_ciudad,
                                 modelo=modelo,
                                 marca=marca)
 
         db.session.add(vehiculo)
         db.session.commit()
 
-        return createVehiculo(vehiculo=vehiculo)
+        return CreateVehiculo(vehiculo=vehiculo)
     
-class updateVehiculo(Mutation):
+class UpdateVehiculo(Mutation):
     class Arguments:
         patente_vehiculo = String(required=True)
         anio_fabricacion = Int()
-        nombreyapellido_propietario = String()
-        domicilio_propietario = String()
+        nombre_propietario = String()
+        apellido_propietario = String()
+        domicilio_propietario_calle = String()
+        domicilio_propietario_numero = Int()
+        domicilio_propietario_ciudad = String()
         modelo = String()
         marca = String()
 
-
     vehiculo = Field(lambda: Vehiculo)
 
-    def mutate(self, info, patente_vehiculo, anio_fabricacion=None,  nombreyapellido_propietario=None, domicilio_propietario=None, modelo=None, marca=None):
+    def mutate(self, info, patente_vehiculo, anio_fabricacion=None, nombre_propietario=None, apellido_propietario=None, domicilio_propietario_calle=None, domicilio_propietario_numero=None, domicilio_propietario_ciudad=None, modelo=None, marca=None):
         vehiculo = VehiculoModel.query.get(patente_vehiculo)
         if vehiculo:
             if anio_fabricacion:
                 vehiculo.anio_fabricacion = anio_fabricacion
-            if nombreyapellido_propietario:
-                vehiculo.nombreyapellido_propietario = nombreyapellido_propietario
-            if domicilio_propietario:
-                vehiculo.domicilio_propietario = domicilio_propietario
+            if nombre_propietario is not None:
+                vehiculo.nombre_propietario = nombre_propietario
+            if apellido_propietario is not None:
+                vehiculo.apellido_propietario = apellido_propietario
+            if domicilio_propietario_calle is not None:
+                vehiculo.domicilio_propietario_calle = domicilio_propietario_calle
+            if domicilio_propietario_numero is not None:
+                vehiculo.domicilio_propietario_numero = domicilio_propietario_numero
+            if domicilio_propietario_ciudad is not None:
+                vehiculo.domicilio_propietario_ciudad = domicilio_propietario_ciudad
             if modelo:
                 vehiculo.modelo = modelo
             if marca:
@@ -148,9 +168,9 @@ class updateVehiculo(Mutation):
             db.session.add(vehiculo)
             db.session.commit()
 
-        return updateVehiculo(vehiculo=vehiculo)
+        return UpdateVehiculo(vehiculo=vehiculo)
 
-class deleteVehiculo(Mutation):
+class DeleteVehiculo(Mutation):
     class Arguments:
         patente_vehiculo = String(required=True)
 
@@ -162,23 +182,29 @@ class deleteVehiculo(Mutation):
             db.session.delete(vehiculo)
             db.session.commit()
 
-        return deleteVehiculo(vehiculo=vehiculo)
+        return DeleteVehiculo(vehiculo=vehiculo)
     
-class createRegistro(Mutation):
+class CreateRegistro(Mutation):
     class Arguments:
         numero_registro = Int(required=True)
-        nombreyapellido = String(required=True)
-        domicilio = String(required=True)
+        nombre = String(required=True)
+        apellido = String(required=True)
+        domicilio_calle = String(required=True)
+        domicilio_numero = Int(required=True)
+        domicilio_ciudad = String(required=True)
         edad = Int(required=False)
         fecha_emision = String(required=False)
         fecha_vencimiento = String(required=True)
     
     registro = Field(lambda: Registro)
 
-    def mutate(self, info, numero_registro,  nombreyapellido, domicilio, edad=None, fecha_emision=None, fecha_vencimiento=None):
+    def mutate(self, info, numero_registro, nombre, apellido, domicilio_calle, domicilio_numero, domicilio_ciudad, edad=None, fecha_emision=None, fecha_vencimiento=None):
         registro = RegistroModel(numero_registro=numero_registro,
-                                nombreyapellido=nombreyapellido,
-                                domicilio=domicilio,
+                                nombre=nombre,
+                                apellido=apellido,
+                                domicilio_calle=domicilio_calle,
+                                domicilio_numero=domicilio_numero,
+                                domicilio_ciudad=domicilio_ciudad,
                                 edad=edad,
                                 fecha_emision=fecha_emision,
                                 fecha_vencimiento=fecha_vencimiento)
@@ -186,26 +212,35 @@ class createRegistro(Mutation):
         db.session.add(registro)
         db.session.commit()
 
-        return createRegistro(registro=registro)
+        return CreateRegistro(registro=registro)
 
-class updateRegistro(Mutation):
+class UpdateRegistro(Mutation):
     class Arguments:
         numero_registro = Int(required=True)
-        nombreyapellido = String()
-        domicilio = String()
+        nombre = String()
+        apellido = String()
+        domicilio_calle = String()
+        domicilio_numero = Int()
+        domicilio_ciudad = String()
         edad = Int()
         fecha_emision = String()
         fecha_vencimiento = String()
 
     registro = Field(lambda: Registro)
 
-    def mutate(self, info, numero_registro, nombreyapellido=None, domicilio=None, edad=None, fecha_emision=None, fecha_vencimiento=None):
+    def mutate(self, info, numero_registro, nombre=None, apellido=None, domicilio_calle=None, domicilio_numero=None, domicilio_ciudad=None, edad=None, fecha_emision=None, fecha_vencimiento=None):
         registro = RegistroModel.query.get(numero_registro)
         if registro:
-            if nombreyapellido:
-                registro.nombreyapellido = nombreyapellido
-            if domicilio:
-                registro.domicilio = domicilio
+            if nombre is not None:
+                registro.nombre = nombre
+            if apellido is not None:
+                registro.apellido = apellido
+            if domicilio_calle is not None:
+                registro.domicilio_calle = domicilio_calle
+            if domicilio_numero is not None:
+                registro.domicilio_numero = domicilio_numero
+            if domicilio_ciudad is not None:
+                registro.domicilio_ciudad = domicilio_ciudad
             if edad:
                 registro.edad = edad
             if fecha_emision:
@@ -215,9 +250,9 @@ class updateRegistro(Mutation):
             db.session.add(registro)
             db.session.commit()
 
-        return updateRegistro(registro=registro)
+        return UpdateRegistro(registro=registro)
 
-class deleteRegistro(Mutation):
+class DeleteRegistro(Mutation):
     class Arguments:
         numero_registro = Int(required=True)
 
@@ -229,9 +264,9 @@ class deleteRegistro(Mutation):
             db.session.delete(registro)
             db.session.commit()
 
-        return deleteRegistro(registro=registro)
+        return DeleteRegistro(registro=registro)
 
-class createUsuario(Mutation):
+class CreateUsuario(Mutation):
     class Arguments:
         nombre = String(required=True)
         contrasenia = String(required=True)
@@ -244,9 +279,9 @@ class createUsuario(Mutation):
         db.session.add(usuario)
         db.session.commit()
 
-        return createUsuario(usuario=usuario)
+        return CreateUsuario(usuario=usuario)
 
-class updateUsuario(Mutation):
+class UpdateUsuario(Mutation):
     class Arguments:
         id = Int(required=True)
         nombre = String()
@@ -267,9 +302,9 @@ class updateUsuario(Mutation):
             db.session.add(usuario)
             db.session.commit()
 
-        return updateUsuario(usuario=usuario)
+        return UpdateUsuario(usuario=usuario)
 
-class deleteUsuario(Mutation):
+class DeleteUsuario(Mutation):
     class Arguments:
         id = Int(required=True)
 
@@ -281,18 +316,18 @@ class deleteUsuario(Mutation):
             db.session.delete(usuario)
             db.session.commit()
 
-        return deleteUsuario(usuario=usuario)
+        return DeleteUsuario(usuario=usuario)
 
 class Mutation(ObjectType):
-    create_infraccion = createInfraccion.Field()
-    update_infraccion = updateInfraccion.Field()
-    delete_infraccion = deleteInfraccion.Field()
-    create_vehiculo = createVehiculo.Field()
-    update_vehiculo = updateVehiculo.Field()
-    delete_vehiculo = deleteVehiculo.Field()
-    create_registro = createRegistro.Field()
-    update_registro = updateRegistro.Field()
-    delete_registro = deleteRegistro.Field()
-    create_usuario = createUsuario.Field()
-    update_usuario = updateUsuario.Field()
-    delete_usuario = deleteUsuario.Field()
+    create_infraccion = CreateInfraccion.Field()
+    update_infraccion = UpdateInfraccion.Field()
+    delete_infraccion = DeleteInfraccion.Field()
+    create_vehiculo = CreateVehiculo.Field()
+    update_vehiculo = UpdateVehiculo.Field()
+    delete_vehiculo = DeleteVehiculo.Field()
+    create_registro = CreateRegistro.Field()
+    update_registro = UpdateRegistro.Field()
+    delete_registro = DeleteRegistro.Field()
+    create_usuario = CreateUsuario.Field()
+    update_usuario = UpdateUsuario.Field()
+    delete_usuario = DeleteUsuario.Field()

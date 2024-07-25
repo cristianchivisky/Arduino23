@@ -1,33 +1,39 @@
 -- Crear la tabla registro
 CREATE TABLE registro (
-    numero_registro INTEGER PRIMARY KEY,
-    nombreyapellido VARCHAR(100) NOT NULL,
-    domicilio VARCHAR(100) NOT NULL,
-    edad INTEGER,
-    fecha_emision VARCHAR(10),
-    fecha_vencimiento VARCHAR(10) NOT NULL
+    numero_registro INTEGER PRIMARY KEY NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+	apellido VARCHAR(50) NOT NULL,
+    domicilio_calle VARCHAR(50) NOT NULL,
+	domicilio_numero INTEGER NOT NULL,
+	domicilio_ciudad VARCHAR(50) NOT NULL,
+    edad INTEGER CHECK (16 <= edad AND edad <= 100) NOT NULL,
+    fecha_emision DATE NOT NULL,
+    fecha_vencimiento DATE NOT NULL
 );
 
 -- Crear la tabla vehiculo
 CREATE TABLE vehiculo (
-    patente_vehiculo VARCHAR(20) PRIMARY KEY,
-    anio_fabricacion INTEGER,
-    nombreyapellido_propietario VARCHAR(100) NOT NULL,
-    domicilio_propietario VARCHAR(100) NOT NULL
-    modelo VARCHAR(50),
-    marca VARCHAR(50)
+    patente_vehiculo VARCHAR(20) PRIMARY KEY NOT NULL,
+    anio_fabricacion INTEGER  CHECK (anio_fabricacion <= EXTRACT(YEAR FROM CURRENT_DATE)),
+    nombre_propietario VARCHAR(50) NOT NULL,
+	apellido_propietario VARCHAR(50) NOT NULL,
+    domicilio_propietario_calle VARCHAR(50) NOT NULL,
+	domicilio_propietario_numero INTEGER NOT NULL,
+	domicilio_propietario_ciudad VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50)  NOT NULL,
+    marca VARCHAR(50)  NOT NULL
 );
 
 -- Crear la tabla infraccion
 CREATE TABLE infraccion (
     numero_infraccion SERIAL PRIMARY KEY,
-    numero_registro_id INTEGER REFERENCES registro(numero_registro),
-    patente_vehiculo_id VARCHAR(20) REFERENCES vehiculo(patente_vehiculo),
-    codigo_infraccion VARCHAR(20),
-    fecha VARCHAR(10),
-    hora VARCHAR(10),
-    observaciones VARCHAR(300),
-    monto FLOAT,
+    numero_registro_id INTEGER REFERENCES registro(numero_registro) ON UPDATE CASCADE NOT NULL,
+    patente_vehiculo_id VARCHAR(20) REFERENCES vehiculo(patente_vehiculo) ON UPDATE CASCADE NOT NULL,
+    codigo_infraccion VARCHAR(20) NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    observaciones TEXT NOT NULL,
+    monto DECIMAL(10, 2) CHECK (monto >= 0) NOT NULL,
     pagado BOOLEAN DEFAULT FALSE
 );
 
@@ -35,39 +41,38 @@ CREATE TABLE usuario (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(50) UNIQUE NOT NULL,
     contrasenia VARCHAR(200) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
     creado TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
 -- Insertar datos de prueba en la tabla registro
-INSERT INTO registro (numero_registro, nombreyapellido, domicilio, edad, fecha_emision, fecha_vencimiento) VALUES
-(12345678, 'Juan Perez', 'Calle Falsa 123', 30, '2023-01-01', '2024-01-01'),
-(23456789, 'Maria Gomez', 'Avenida Siempre Viva 456', 25, '2022-05-15', '2023-05-15'),
-(34567890, 'Carlos Ruiz', 'Boulevard de los Sueños 789', 40, '2021-09-10', '2022-09-10'),
-(45678901, 'Ana Torres', 'Camino Real 321', 28, '2023-02-01', '2024-02-01'),
-(56789012, 'Luis Mendoza', 'Calle Principal 654', 35, '2022-06-20', '2023-06-20'),
-(67890123, 'Elena Ramírez', 'Callejón del Sol 987', 42, '2021-11-05', '2022-11-05'),
-(78901234, 'Lucia Gonzalez', 'Calle Luna 101', 32, '2022-01-01', '2023-01-01'),
-(89012345, 'Jorge Diaz', 'Avenida Sol 202', 45, '2021-05-15', '2022-05-15'),
-(90123456, 'Mariana Lopez', 'Boulevard Estrella 303', 29, '2020-09-10', '2021-09-10'),
-(12345679, 'Pablo Martinez', 'Camino Real 404', 37, '2019-02-01', '2020-02-01'),
-(23456780, 'Sofia Sanchez', 'Calle del Sol 505', 41, '2022-06-20', '2023-06-20');
-
+INSERT INTO registro (numero_registro, nombre, apellido, domicilio_calle, domicilio_numero, domicilio_ciudad, edad, fecha_emision, fecha_vencimiento) VALUES
+(12345678, 'Juan', 'Perez', 'Calle Falsa', 123, 'Ciudad Falsa', 30, '2023-01-01', '2024-01-01'),
+(23456789, 'Maria', 'Gomez', 'Avenida Siempre Viva', 456, 'Ciudad Viva', 25, '2022-05-15', '2023-05-15'),
+(34567890, 'Carlos', 'Ruiz', 'Boulevard de los Sueños', 789, 'Ciudad Sueños', 40, '2021-09-10', '2022-09-10'),
+(45678901, 'Ana', 'Torres', 'Camino Real', 321, 'Ciudad Real', 28, '2023-02-01', '2024-02-01'),
+(56789012, 'Luis', 'Mendoza', 'Calle Principal', 654, 'Ciudad Principal', 35, '2022-06-20', '2023-06-20'),
+(67890123, 'Elena', 'Ramírez', 'Callejón del Sol', 987, 'Ciudad Sol', 42, '2021-11-05', '2022-11-05'),
+(78901234, 'Lucia', 'Gonzalez', 'Calle Luna', 101, 'Ciudad Luna', 32, '2022-01-01', '2023-01-01'),
+(89012345, 'Jorge', 'Diaz', 'Avenida Sol', 202, 'Ciudad Sol', 45, '2021-05-15', '2022-05-15'),
+(90123456, 'Mariana', 'Lopez', 'Boulevard Estrella', 303, 'Ciudad Estrella', 29, '2020-09-10', '2021-09-10'),
+(12345679, 'Pablo', 'Martinez', 'Camino Real', 404, 'Ciudad Real', 37, '2019-02-01', '2020-02-01'),
+(23456780, 'Sofia', 'Sanchez', 'Calle del Sol', 505, 'Ciudad Sol', 41, '2022-06-20', '2023-06-20');
 
 -- Insertar datos de prueba en la tabla vehiculo
-INSERT INTO vehiculo (patente_vehiculo, anio_fabricacion, nombreyapellido_propietario, domicilio_propietario, modelo, marca) VALUES
-('ABC123', 2015, 'Juan Perez', 'Calle Falsa 123', 'Fiesta', 'Ford'),
-('XYZ789', 2018, 'Maria Gomez', 'Avenida Siempre Viva 456', 'Civic', 'Honda'),
-('LMN456', 2020, 'Carlos Ruiz', 'Boulevard de los Sueños 789', 'Corolla', 'Toyota'),
-('DEF456', 2016, 'Ana Torres', 'Camino Real 321', 'Civic', 'Honda'),
-('GHI789', 2019, 'Luis Mendoza', 'Calle Principal 654', 'Corolla', 'Toyota'),
-('JKL012', 2021, 'Elena Ramírez', 'Callejón del Sol 987', 'Focus', 'Ford'),
-('MNO345', 2017, 'Lucia Gonzalez', 'Calle Luna 101', 'Sentra', 'Nissan'),
-('PQR678', 2019, 'Jorge Diaz', 'Avenida Sol 202', 'Accord', 'Honda'),
-('STU901', 2021, 'Mariana Lopez', 'Boulevard Estrella 303', 'Civic', 'Honda'),
-('VWX234', 2016, 'Pablo Martinez', 'Camino Real 404', 'Camry', 'Toyota'),
-('YZA567', 2018, 'Sofia Sanchez', 'Calle del Sol 505', 'Cruze', 'Chevrolet');
+INSERT INTO vehiculo (patente_vehiculo, anio_fabricacion, nombre_propietario, apellido_propietario, domicilio_propietario_calle, domicilio_propietario_numero, domicilio_propietario_ciudad, modelo, marca) VALUES
+('ABC123', 2015, 'Juan', 'Perez', 'Calle Falsa', 123, 'Ciudad Falsa', 'Fiesta', 'Ford'),
+('XYZ789', 2018, 'Maria', 'Gomez', 'Avenida Siempre Viva', 456, 'Ciudad Viva', 'Civic', 'Honda'),
+('LMN456', 2020, 'Carlos', 'Ruiz', 'Boulevard de los Sueños', 789, 'Ciudad Sueños', 'Corolla', 'Toyota'),
+('DEF456', 2016, 'Ana', 'Torres', 'Camino Real', 321, 'Ciudad Real', 'Civic', 'Honda'),
+('GHI789', 2019, 'Luis', 'Mendoza', 'Calle Principal', 654, 'Ciudad Principal', 'Corolla', 'Toyota'),
+('JKL012', 2021, 'Elena', 'Ramírez', 'Callejón del Sol', 987, 'Ciudad Sol', 'Focus', 'Ford'),
+('MNO345', 2017, 'Lucia', 'Gonzalez', 'Calle Luna', 101, 'Ciudad Luna', 'Sentra', 'Nissan'),
+('PQR678', 2019, 'Jorge', 'Diaz', 'Avenida Sol', 202, 'Ciudad Sol', 'Accord', 'Honda'),
+('STU901', 2021, 'Mariana', 'Lopez', 'Boulevard Estrella', 303, 'Ciudad Estrella', 'Civic', 'Honda'),
+('VWX234', 2016, 'Pablo', 'Martinez', 'Camino Real', 404, 'Ciudad Real', 'Camry', 'Toyota'),
+('YZA567', 2018, 'Sofia', 'Sanchez', 'Calle del Sol', 505, 'Ciudad Sol', 'Cruze', 'Chevrolet');
 
 -- Insertar datos de prueba en la tabla infraccion
 INSERT INTO infraccion (numero_registro_id, patente_vehiculo_id, codigo_infraccion, fecha, hora, observaciones, monto, pagado) VALUES
@@ -98,4 +103,3 @@ INSERT INTO infraccion (numero_registro_id, patente_vehiculo_id, codigo_infracci
 (90123456, 'STU901', 'RLZ025', '2023-10-25', '17:15', 'Conducir sin cinturón de seguridad', 100.00, TRUE),
 (12345679, 'VWX234', 'EXC026', '2023-11-01', '19:00', 'Exceso de velocidad en zona urbana', 100.00, FALSE),
 (23456780, 'YZA567', 'PRK027', '2023-11-05', '21:30', 'Estacionamiento en zona de carga', 120.00, TRUE);
-

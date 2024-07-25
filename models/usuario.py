@@ -6,4 +6,4 @@ class Usuario(db.Model):
     nombre = db.Column(db.String(50), unique=True, nullable=False)
     contrasenia = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    creado = db.Column(db.String(10))
+    creado = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
